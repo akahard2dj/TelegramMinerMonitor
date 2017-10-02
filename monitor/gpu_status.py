@@ -1,12 +1,13 @@
 import subprocess
 
+
 class GPUInfo:
     def __init__(self):
         self._host = ''
         self._user = 'miner'
         self._query = 'nvidia-smi --query-gpu=timestamp,name,temperature.gpu,power.draw,fan.speed --format=csv'
 
-    def get_info(self, host=host):
+    def get_info(self, host):
         cmd = []
         cmd.append('ssh')
         cmd.append('{}@{}'.format(self._user, host))

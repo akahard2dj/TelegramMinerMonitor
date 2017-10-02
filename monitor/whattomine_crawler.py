@@ -1,18 +1,9 @@
 from bs4 import BeautifulSoup
-import datetime
 import time
 import requests
 
-def timestamp_to_datetime(unix_time: int, date_format='%Y-%m-%d %H:%M:%S') -> str:
+import utils.util
 
-    if isinstance(unix_time, int):
-        output = datetime.datetime.fromtimestamp(unix_time).strftime(date_format)
-    elif isinstance(unix_time, str):
-        output = datetime.datetime.fromtimestamp(int(unix_time)).strftime(date_format)
-    else:
-        output = '0000-00-00 00:00:00'
-
-    return output
 
 class WhatToMine:
     def __init__(self):
@@ -81,7 +72,7 @@ class WhatToMine:
                 coin_items.append(item)
         
         unix_time = int(time.time())
-        msg = 'Requested Time = {}\n'.format(timestamp_to_datetime(unix_time))
+        msg = 'Requested Time = {}\n'.format(utils.util.timestamp_to_datetime(unix_time))
         msg += 'WhatToMine Top 15\n'
         msg += 'Rank, Name, Profit, BTC, Rewards, Difficulty, NetHash\n'
         for item in coin_items[0:14]:

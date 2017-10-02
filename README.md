@@ -1,16 +1,34 @@
 # Monitoring of minging a cryptocurrency by TelegramBot
 This monitoring program is aim to manage miners remotely.
 
-This program is based on python3.5 and the used library and the openapi is below the list
+This program is based on python3.5 and the used library and the openapi is below a list
+
+- target OS
+    - Ubuntua
+- Required system variable in .profile
+    - OTP_CODE
+    - MPH_APIKEY
+    - TELEGRAM_APIKEY
+    - TELEGRAM_CHAT_ID
+- Necessary program
+    - screen
 - Python library
     - python-telegram-bot
     - requests
     - pyotp
-- currency api : http://api.fixer.io
+    - BeautifulSoup4
+    - APScheduler
+    - SQLAlchemy
+- currency api : 
+    - http://api.fixer.io
 - coin price api :
     - https://api.bitfinex.com/
     - https://api.coinone.co.kr/
-- mining pool api : https://{coin}.miningpoolhub.com/
+- mining pool api : 
+    - https://{coin}.miningpoolhub.com/
+- profitability of mining
+    - http://whattomine.com
 
 The all questions is always welcomed!
+
 Feel free to ask.

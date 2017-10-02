@@ -1,12 +1,13 @@
-from apscheduler.schedulers.blocking import BlockingScheduler
-
-import time
 import datetime
+import time
 
-from telegram_send_api import TelegramSendMessage
-from gpu_status import GPUInfo
-from miningpoolhub_api import Dashboard
-from util import UtilApi
+from apscheduler.schedulers.blocking import BlockingScheduler
+from monitor.gpu_status import GPUInfo
+
+from monitor.miningpoolhub_api import Dashboard
+from utils.telegram_send_api import TelegramSendMessage
+from utils.util_api import UtilApi
+import utils.util
 
 sched = BlockingScheduler()
 
@@ -19,20 +20,9 @@ gpu_info = GPUInfo()
 telegram_sender = TelegramSendMessage()
 
 
-def timestamp_to_datetime(unix_time: int, date_format='%Y-%m-%d %H:%M:%S') -> str:
-
-    if isinstance(unix_time, int):
-        output = datetime.datetime.fromtimestamp(unix_time).strftime(date_format)
-    elif isinstance(unix_time, str):
-        output = datetime.datetime.fromtimestamp(int(unix_time)).strftime(date_format)
-    else:
-        output = '0000-00-00 00:00:00'
-
-    return output
-
 def get_gpu_info(unix_time: int):
     msg = 'Scheduled Message [GPU Info]\n'
-    msg += 'Requested Time = {}\n'.format(timestamp_to_datetime(unix_time))
+    msg += 'Requested Time = {}\n'.format(utils.util.timestamp_to_datetime(unix_time))
     for host in hosts:
         gpu = gpu_info.get_info(host)
         msg += 'Host    : {}\n'.format(host)
@@ -65,7 +55,7 @@ def get_mph_dashboard(unix_time: int):
 
     currency = util.get_currency()
     msg = '\nScheduled Message [MPH Info]\n'
-    msg += 'Requested Time = {}\n'.format(timestamp_to_datetime(unix_time))
+    msg += 'Requested Time = {}\n'.format(utils.util.timestamp_to_datetime(unix_time))
     msg += "{}\n".format(coin_name)
     msg += "\n"
     msg += "Total Hashrate : {:7.2f}  {}\n\n".format(hashrate, unit)
@@ -89,7 +79,7 @@ def get_mph_dashboard(unix_time: int):
 def timed_daily_report():
 
     unix_time = int(time.time())
-    print('{} - Scheduled job[cron, day_of_week=mon-fri, hour=9]: Miner Daily Report'.format(timestamp_to_datetime(unix_time)))
+    print('{} - Scheduled job[cron, day_of_week=mon-fri, hour=9]: Miner Daily Report'.format(utils.util.timestamp_to_datetime(unix_time)))
     gpu_status_text = get_gpu_info(unix_time)
     mph_dashboard_text = get_mph_dashboard(unix_time)
 
@@ -99,7 +89,7 @@ def timed_daily_report():
 @sched.scheduled_job('interval', minutes=10)
 def timed_warning_message():
     unix_time = int(time.time())
-    print('{} - Scheduled job[interval, minutes=10]: GPU Status checking'.format(timestamp_to_datetime(unix_time)))
+    print('{} - Scheduled job[interval, minutes=10]: GPU Status checking'.format(utils.util.timestamp_to_datetime(unix_time)))
     msg = ''
     for idx, host in enumerate(hosts):
         gpu = gpu_info.get_info(host)
