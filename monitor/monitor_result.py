@@ -1,4 +1,5 @@
 from monitor.miningpoolhub_api import Dashboard
+from monitor.whattomine_crawler import WhatToMine
 from utils.util_api import UtilApi
 import utils.util
 
@@ -97,5 +98,14 @@ def get_price(unix_time: int):
     msg += "  Zcash  \t {:8d}\n".format(int(zec_bitfinex * currency["KRW"]))
     msg += "  Qtum   \t {:8d}\n".format(int(coinone_price["qtum"]["last"]))
     msg += "  Eth    \t {:8d}\n".format(int(coinone_price["eth"]["last"]))
+
+    return msg
+
+
+def get_whattomine_result(unix_time: int):
+    msg = ''
+    msg += 'Requested Time = {}\n'.format(utils.util.timestamp_to_datetime(unix_time))
+    res = WhatToMine()
+    msg += res.get_result()
 
     return msg

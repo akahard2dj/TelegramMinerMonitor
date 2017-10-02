@@ -6,7 +6,7 @@ import pyotp
 from telegram.ext import Updater, CommandHandler
 
 from monitor.gpu_status import GPUInfo
-from monitor.monitor_result import get_gpu_info, get_mph_info, get_price
+from monitor.monitor_result import get_gpu_info, get_mph_info, get_price, get_whattomine_result
 
 
 mph_apikey = os.environ["MPH_APIKEY"]
@@ -36,6 +36,11 @@ def price(bot, update):
 
     update.message.reply_text(msg)
 
+def mine_rank(bot, update):
+    unix_time = int(time.time())
+    msg = get_whattomine_result(unix_time)
+
+    update.message.reply_text(msg)
 
 def cmd_power_limit(bot, update, args, chat_data):
     chat_id = update.message.chat_id
@@ -107,6 +112,7 @@ updater = Updater(telegram_apikey)
 updater.dispatcher.add_handler(CommandHandler('status', status))
 updater.dispatcher.add_handler(CommandHandler('gpu', gpu_status))
 updater.dispatcher.add_handler(CommandHandler('price', price))
+updater.dispatcher.add_handler(CommandHandler('minerank', mine_rank))
 updater.dispatcher.add_handler(CommandHandler('cmd_pl', cmd_power_limit, pass_args=True, pass_chat_data=True))
 updater.dispatcher.add_handler(CommandHandler('cmd_start', cmd_miner_start, pass_args=True, pass_chat_data=True))
 updater.dispatcher.add_handler(CommandHandler('cmd_kill', cmd_miner_kill, pass_args=True, pass_chat_data=True))

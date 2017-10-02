@@ -3,6 +3,7 @@ import time
 import os
 
 from apscheduler.schedulers.blocking import BlockingScheduler
+from monitor.monitor_result import get_gpu_info, get_mph_info, get_whattomine_result
 from monitor.gpu_status import GPUInfo
 
 from monitor.miningpoolhub_api import Dashboard
@@ -83,11 +84,22 @@ def timed_daily_report():
 
     unix_time = int(time.time())
     print('{} - Scheduled job[cron, day_of_week=mon-fri, hour=9]: Miner Daily Report'.format(utils.util.timestamp_to_datetime(unix_time)))
-    gpu_status_text = get_gpu_info(unix_time)
-    mph_dashboard_text = get_mph_dashboard(unix_time)
+    #gpu_status_text = get_gpu_info(unix_time)
+    #mph_dashboard_text = get_mph_dashboard(unix_time)
+    #whattomine_report_text = get
+
+    gpu_status_text = 'Scheduled Message [GPU Info]\n'
+    gpu_status_text += get_gpu_info(unix_time, gpu_info, hosts)
+
+    mph_dashboard_text = 'Scheduled Message [MPH Info]\n'
+    mph_dashboard_text += get_mph_info(unix_time, mph_apikey)
+
+    whattomine_report_text = 'Scheduled Message [WhatToMine Report]\n'
+    whattomine_report_text += get_whattomine_result(unix_time)
 
     telegram_sender.send_message(gpu_status_text, verbose=True)
     telegram_sender.send_message(mph_dashboard_text, verbose=True)
+    telegram_sender.send_message(whattomine_report_text, verbose=True)
     
 @sched.scheduled_job('interval', minutes=10)
 def timed_warning_message():
