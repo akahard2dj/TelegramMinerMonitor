@@ -42,6 +42,27 @@ def mine_rank(bot, update):
 
     update.message.reply_text(msg)
 
+def deploy(bot, update, args, chat_data):
+    chat_id = update.message.chat_id
+    unix_time = int(time.time())
+    try:
+        code = args[0]
+        if not code.isdigit():
+            update.message.reply_text('Invalid auth code')
+            return
+
+        if totp.verify(int(code)):
+            # logging.warning('Someone get an authentication from server')
+            #update.message.reply_text('Successfully changed power limit "{} : {}W"'.format(args[1], args[2]))
+            call(['ssh', 'miner@{}'.format(args[1]), "sudo", "nvidia-smi", "-pl", args[2]])
+            gpu_info = GPUInfo()
+            msg = get_gpu_info(unix_time, gpu_info, hosts)
+            update.message.reply_text(msg)
+        else:
+            update.message.reply_text('Invalid auth code')
+    except (IndexError, ValueError):
+        update.message.reply_text('Usage: /cmd_pl <authcode> hostname power')
+
 def cmd_power_limit(bot, update, args, chat_data):
     chat_id = update.message.chat_id
     unix_time = int(time.time())

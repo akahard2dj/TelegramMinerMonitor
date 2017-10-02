@@ -72,7 +72,7 @@ class WhatToMine:
                 coin_items.append(item)
         
         unix_time = int(time.time())
-        msg = 'Requested Time = {}\n'.format(utils.util.timestamp_to_datetime(unix_time))
+        msg = ''
         msg += 'WhatToMine Top 15\n'
         msg += 'Rank, Name, Profit, BTC, Rewards, Difficulty, NetHash\n'
         for item in coin_items[0:14]:
