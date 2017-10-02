@@ -13,7 +13,7 @@ mph_apikey = os.environ["MPH_APIKEY"]
 telegram_apikey = os.environ["TELEGRAM_APIKEY"]
 otp_key = os.environ["OTP_CODE"]
 totp = pyotp.TOTP(otp_key)
-hosts = ['host1', 'host2', ...]
+hosts = ['miner1', 'miner2']
 
 def gpu_status(bot, update):
     gpu_info = GPUInfo()

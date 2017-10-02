@@ -1,5 +1,6 @@
 import datetime
 import time
+import os
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from monitor.gpu_status import GPUInfo
@@ -11,13 +12,15 @@ import utils.util
 
 sched = BlockingScheduler()
 
-mph_apikey = ''
+mph_apikey = os.environ["MPH_APIKEY"]
+telegram_apikey = os.environ["TELEGRAM_APIKEY"]
+telegram_chat_id = os.environ["TELEGRAM_CHAT_ID"]
 hosts = ['miner1', 'miner2']
 num_gpu_set = [3, 3]
 gpu_temp_thresh = 77.0
 
 gpu_info = GPUInfo()
-telegram_sender = TelegramSendMessage()
+telegram_sender = TelegramSendMessage(telegram_apikey, telegram_chat_id)
 
 
 def get_gpu_info(unix_time: int):

@@ -1,6 +1,6 @@
 #/bin/bash
 echo "Scheduler job is starting"
-screen -d -m -S sched_job python3.5 scheduler_message.py
+screen -d -m -S sched_job /home/pi/Workspace/github/TelegramMinerMonitor/sched_job.sh
 
 echo "Telegram bot is starting"
-screen -d -m -S miner_bot python3.5 main.py
+screen -d -m -S miner_bot /home/pi/Workspace/github/TelegramMinerMonitor/miner_bot.sh
