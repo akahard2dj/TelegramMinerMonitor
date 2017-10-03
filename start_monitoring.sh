@@ -1,4 +1,4 @@
-#/bin/bash
+#!/usr/bin/env bash
 echo "Scheduler job is starting"
 screen -d -m -S sched_job /home/pi/Workspace/github/TelegramMinerMonitor/sched_job.sh
 
