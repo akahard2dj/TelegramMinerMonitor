@@ -33,4 +33,4 @@ The all questions is always welcomed!
 
 Feel free to ask.
 
-<img src="https://raw.githubusercontent.com/akahard2dj/TelegramMinerMonitor/master/media/jetbrains.png" width="50" height="50"/> Powered by JetBrains OpenSource License.
+Powered by JetBrains OpenSource License. <img src="https://raw.githubusercontent.com/akahard2dj/TelegramMinerMonitor/master/media/jetbrains.png" width="50" height="50"/>
