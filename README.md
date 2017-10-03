@@ -33,7 +33,4 @@ The all questions is always welcomed!
 
 Feel free to ask.
 
-Powered by JetBrains OpenSource License.
-
-<img src="https://raw.githubusercontent.com/akahard2dj/TelegramMinerMonitor/master/media/jetbrains.png" width="50" height="50"/>
-![](https://raw.githubusercontent.com/akahard2dj/TelegramMinerMonitor/master/media/jetbrains.png=50x50)
+<img src="https://raw.githubusercontent.com/akahard2dj/TelegramMinerMonitor/master/media/jetbrains.png" width="50" height="50"/> Powered by JetBrains OpenSource License.
