@@ -35,4 +35,4 @@ Feel free to ask.
 
 Powered by JetBrains OpenSource License.
 
-![](https://raw.githubusercontent.com/akahard2dj/TelegramMinerMonitor/master/media/jetbrains.png)
+![](https://raw.githubusercontent.com/akahard2dj/TelegramMinerMonitor/master/media/jetbrains.png=50x50)
