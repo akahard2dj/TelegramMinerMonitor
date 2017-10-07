@@ -1,10 +1,10 @@
-# Monitoring of minging a cryptocurrency by TelegramBot
+# Monitoring of mining a cryptocurrency by TelegramBot
 This monitoring program is aim to manage miners remotely.
 
 This program is based on python3.5 and the used library and the openapi is below a list
 
 - target OS
-    - Ubuntua
+    - Ubuntu
 - Required system variable in .profile
     - OTP_CODE
     - MPH_APIKEY
@@ -32,3 +32,5 @@ This program is based on python3.5 and the used library and the openapi is below
 The all questions is always welcomed!
 
 Feel free to ask.
+
+Powered by JetBrains OpenSource License. <img src="https://raw.githubusercontent.com/akahard2dj/TelegramMinerMonitor/master/media/jetbrains.png" width="50" height="50"/>
