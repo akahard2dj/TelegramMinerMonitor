@@ -79,7 +79,7 @@ def get_mph_dashboard(unix_time: int):
 
     return msg
 
-@sched.scheduled_job('cron', day_of_week='mon-fri', hour=9)
+@sched.scheduled_job('cron', day_of_week='mon-sun', hour=9)
 def timed_daily_report():
 
     unix_time = int(time.time())
@@ -89,7 +89,7 @@ def timed_daily_report():
     #whattomine_report_text = get
 
     gpu_status_text = 'Scheduled Message [GPU Info]\n'
-    gpu_status_text += get_gpu_info(unix_time, gpu_info, hosts)
+    gpu_status_text += get_gpu_info(unix_time)
 
     mph_dashboard_text = 'Scheduled Message [MPH Info]\n'
     mph_dashboard_text += get_mph_info(unix_time, mph_apikey)

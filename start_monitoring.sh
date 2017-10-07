@@ -1,4 +1,7 @@
 #/bin/bash
+echo "Killing previous processes"
+/home/pi/Workspace/github/TelegramMinerMonitor/kill_screen.sh
+
 echo "Scheduler job is starting"
 screen -d -m -S sched_job /home/pi/Workspace/github/TelegramMinerMonitor/sched_job.sh
 
