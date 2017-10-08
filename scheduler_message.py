@@ -100,11 +100,13 @@ def timed_daily_report():
     telegram_sender.send_message(gpu_status_text, verbose=True)
     telegram_sender.send_message(mph_dashboard_text, verbose=True)
     telegram_sender.send_message(whattomine_report_text, verbose=True)
-    
+
+
 @sched.scheduled_job('interval', minutes=10)
 def timed_warning_message():
     unix_time = int(time.time())
     print('{} - Scheduled job[interval, minutes=10]: GPU Status checking'.format(utils.util.timestamp_to_datetime(unix_time)))
+    telegram_sender.send_message('test')
     msg = ''
     for idx, host in enumerate(hosts):
         gpu = gpu_info.get_info(host)
