@@ -107,6 +107,7 @@ def timed_warning_message():
     unix_time = int(time.time())
     print('{} - Scheduled job[interval, minutes=10]: GPU Status checking'.format(utils.util.timestamp_to_datetime(unix_time)))
     msg = ''
+    # comment
     for idx, host in enumerate(hosts):
         gpu = gpu_info.get_info(host)
         num_gpu = gpu["num_gpu"]
