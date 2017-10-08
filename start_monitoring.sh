@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+echo "updating a .profile"
+source /home/pi/.profile
+
 echo "Killing previous processes"
 /home/pi/Workspace/github/TelegramMinerMonitor/kill_screen.sh
 

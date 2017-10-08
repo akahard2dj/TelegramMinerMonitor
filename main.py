@@ -55,10 +55,9 @@ def deploy(bot, update, args, chat_data):
 
         if totp.verify(int(code)):
             cmd1 = '{}deploy.sh'.format(exec_folder)
-            cmd2 = 'sleep 1.0'
-            cmd3 = '{}start_monitoring.sh'.format(exec_folder)
+            cmd2 = '{}start_monitoring.sh'.format(exec_folder)
     
-            update.message.reply_text('{};{};{}'.format(cmd1,cmd2,cmd3))
+            update.message.reply_text('{};{}'.format(cmd1,cmd2))
             update.message.reply_text('deploying > git fetching > start\n')
             update.message.reply_text('successfull deployed\n')
             call(['{};{};{}'.format(cmd1, cmd2, cmd3)])
