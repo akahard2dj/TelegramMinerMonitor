@@ -1,5 +1,5 @@
 # Monitoring of mining a cryptocurrency by TelegramBot
-This monitoring program is aim to manage miners remotely.
+This monitoring program is aimed to manage miners remotely.
 
 This program is based on python3.5 and the used library and the openapi is below a list
 
