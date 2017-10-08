@@ -101,7 +101,7 @@ def timed_daily_report():
     telegram_sender.send_message(mph_dashboard_text, verbose=True)
     telegram_sender.send_message(whattomine_report_text, verbose=True)
     
-@sched.scheduled_job('interval', minutes=10)
+@sched.scheduled_job('interval', seconds=10)
 def deploy_test():
     telegram_sender.send_message('test')
 
