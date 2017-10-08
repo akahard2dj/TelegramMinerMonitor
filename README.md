@@ -10,6 +10,7 @@ This program is based on python3.5 and the used library and the openapi is below
     - MPH_APIKEY
     - TELEGRAM_APIKEY
     - TELEGRAM_CHAT_ID
+    - EXEC_FOLDER
 - Necessary program
     - screen
 - Python library
