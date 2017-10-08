@@ -11,7 +11,6 @@ This program is based on python3.5 and the used library and the openapi is below
     - TELEGRAM_APIKEY
     - TELEGRAM_CHAT_ID
     - EXEC_FOLDER
-    - TEMP
 - Necessary program
     - screen
 - Python library
