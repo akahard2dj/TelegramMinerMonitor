@@ -1,6 +1,7 @@
 import os
 import time
 from subprocess import call
+from time import sleep
 
 import pyotp
 from telegram.ext import Updater, CommandHandler
@@ -12,6 +13,7 @@ from monitor.monitor_result import get_gpu_info, get_mph_info, get_price, get_wh
 mph_apikey = os.environ["MPH_APIKEY"]
 telegram_apikey = os.environ["TELEGRAM_APIKEY"]
 otp_key = os.environ["OTP_CODE"]
+exec_folder = os.environ["EXEC_FOLDER"]
 totp = pyotp.TOTP(otp_key)
 hosts = ['miner1', 'miner2']
 
@@ -51,17 +53,15 @@ def deploy(bot, update, args, chat_data):
             update.message.reply_text('Invalid auth code')
             return
 
-        if totp.verify(int(code)):
-            # logging.warning('Someone get an authentication from server')
-            #update.message.reply_text('Successfully changed power limit "{} : {}W"'.format(args[1], args[2]))
-            call(['ssh', 'miner@{}'.format(args[1]), "sudo", "nvidia-smi", "-pl", args[2]])
-            gpu_info = GPUInfo()
-            msg = get_gpu_info(unix_time, gpu_info, hosts)
-            update.message.reply_text(msg)
+        if totp.verify(int(code)):            
+            call(['{}deploy.sh'.format(exec_folder)])
+            sleep(1.0)
+            call(['{}start_monitoring.sh'.format(exec_folder)])
+            update.message.reply_text('successfull deployed')
         else:
             update.message.reply_text('Invalid auth code')
     except (IndexError, ValueError):
-        update.message.reply_text('Usage: /cmd_pl <authcode> hostname power')
+        update.message.reply_text('Usage: /deploy <authcode>')
 
 def cmd_power_limit(bot, update, args, chat_data):
     chat_id = update.message.chat_id
@@ -128,12 +128,14 @@ def cmd_miner_kill(bot, update, args, chat_data):
     except (IndexError, ValueError):
         update.message.reply_text('Usage: /cmd_kill <authcode>')
 
+
 updater = Updater(telegram_apikey)
 
 updater.dispatcher.add_handler(CommandHandler('status', status))
 updater.dispatcher.add_handler(CommandHandler('gpu', gpu_status))
 updater.dispatcher.add_handler(CommandHandler('price', price))
 updater.dispatcher.add_handler(CommandHandler('minerank', mine_rank))
+updater.dispatcher.add_handler(CommandHandler('deploy', deploy, pass_args=True, pass_chat_data=True))
 updater.dispatcher.add_handler(CommandHandler('cmd_pl', cmd_power_limit, pass_args=True, pass_chat_data=True))
 updater.dispatcher.add_handler(CommandHandler('cmd_start', cmd_miner_start, pass_args=True, pass_chat_data=True))
 updater.dispatcher.add_handler(CommandHandler('cmd_kill', cmd_miner_kill, pass_args=True, pass_chat_data=True))
