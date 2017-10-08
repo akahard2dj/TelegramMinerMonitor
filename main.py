@@ -56,11 +56,12 @@ def deploy(bot, update, args, chat_data):
         if totp.verify(int(code)):
             cmd1 = '{}deploy.sh'.format(exec_folder)
             cmd2 = '{}start_monitoring.sh'.format(exec_folder)
+            call(['{}'.format(cmd1)])
     
             update.message.reply_text('{};{}'.format(cmd1,cmd2))
             update.message.reply_text('deploying > git fetching > start\n')
             update.message.reply_text('successfull deployed\n')
-            call(['{};{};{}'.format(cmd1, cmd2, cmd3)])
+            #call(['{};{}'.format(cmd1, cmd2)])
         else:
             update.message.reply_text('Invalid auth code')
     except (IndexError, ValueError):
