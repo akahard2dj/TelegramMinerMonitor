@@ -1,7 +1,21 @@
 from monitor.miningpoolhub_api import Dashboard
+from monitor.miner_api import MinerAPI
 from monitor.whattomine_crawler import WhatToMine
 from utils.util_api import UtilApi
 import utils.util
+
+
+def get_miner_report(unix_time: int, miner_api: MinerAPI, hosts):
+    msg = ''
+    msg += 'Requested Time = {}\n'.format(utils.util.timestamp_to_datetime(unix_time))
+    for host in hosts:
+        miner_info = miner_api.get_miner_info(host)
+        for idx, miner in enumerate(miner_info[0:-1]):
+            msg += '{}, {}, {}, {}, {}, {}, {}\n'.format(miner['name'], miner['temp'], miner['power'], miner['hash'], miner['hash_eff'], miner['accepted'], miner['rejected'])
+        msg += '{}, {}, {}, {}, {}, {}, {}\n'.format(miner_info[-1]['name'], miner_info[-1]['temp'], miner_info[-1]['power'], miner_info[-1]['hash'],
+                                                     miner_info[-1]['hash_eff'], miner_info[-1]['accepted'], miner_info[-1]['rejected'])
+
+    return msg
 
 
 def get_gpu_info(unix_time: int, gpu_info, hosts):

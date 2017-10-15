@@ -20,6 +20,7 @@ hosts = ['miner1', 'miner2']
 
 def gpu_status(bot, update):
     gpu_info = GPUInfo()
+    miner_api = MinerAPI()
     unix_time = int(time.time())
     msg = get_gpu_info(unix_time, gpu_info, hosts)
     
