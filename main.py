@@ -25,7 +25,6 @@ miner_api = MinerAPI()
 def miner_status(bot: Bot, update: Update):
     unix_time = int(time.time())
     msg = get_miner_report(unix_time, miner_api, hosts)
-    update.message.reply_text('test message')
     update.message.reply_text(msg)
 
 
