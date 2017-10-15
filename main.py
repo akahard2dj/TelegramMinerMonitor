@@ -4,11 +4,12 @@ from subprocess import call
 from time import sleep
 
 import pyotp
+from telegram import Bot, Update
 from telegram.ext import Updater, CommandHandler
 
 from monitor.gpu_status import GPUInfo
 from monitor.miner_api import MinerAPI
-from monitor.monitor_result import get_gpu_info, get_mph_info, get_price, get_whattomine_result
+from monitor.monitor_result import get_gpu_info, get_mph_info, get_price, get_whattomine_result, get_miner_report
 
 
 mph_apikey = os.environ["MPH_APIKEY"]
@@ -17,10 +18,18 @@ otp_key = os.environ["OTP_CODE"]
 exec_folder = os.environ["EXEC_FOLDER"]
 totp = pyotp.TOTP(otp_key)
 hosts = ['miner1', 'miner2']
+gpu_info = GPUInfo()
+miner_api = MinerAPI()
+
+
+def miner_status(bot: Bot, update: Update):
+    unix_time = int(time.time())
+    msg = get_miner_report(unix_time, miner_api, hosts)
+
+    update.message.reply_text(msg)
+
 
 def gpu_status(bot, update):
-    gpu_info = GPUInfo()
-    miner_api = MinerAPI()
     unix_time = int(time.time())
     msg = get_gpu_info(unix_time, gpu_info, hosts)
     
@@ -40,11 +49,13 @@ def price(bot, update):
 
     update.message.reply_text(msg)
 
+
 def mine_rank(bot, update):
     unix_time = int(time.time())
     msg = get_whattomine_result(unix_time)
 
     update.message.reply_text(msg)
+
 
 def deploy(bot, update, args, chat_data):
     chat_id = update.message.chat_id
@@ -69,6 +80,7 @@ def deploy(bot, update, args, chat_data):
     except (IndexError, ValueError):
         update.message.reply_text('Usage: /deploy <authcode>')
 
+
 def cmd_power_limit(bot, update, args, chat_data):
     chat_id = update.message.chat_id
     unix_time = int(time.time())
@@ -89,6 +101,7 @@ def cmd_power_limit(bot, update, args, chat_data):
             update.message.reply_text('Invalid auth code')
     except (IndexError, ValueError):
         update.message.reply_text('Usage: /cmd_pl <authcode> hostname power')
+
 
 def cmd_miner_start(bot, update, args, chat_data):
     chat_id = update.message.chat_id
@@ -139,6 +152,7 @@ updater = Updater(telegram_apikey)
 
 updater.dispatcher.add_handler(CommandHandler('status', status))
 updater.dispatcher.add_handler(CommandHandler('gpu', gpu_status))
+updater.dispatcher.add_handler(CommandHandler('miner', miner_status))
 updater.dispatcher.add_handler(CommandHandler('price', price))
 updater.dispatcher.add_handler(CommandHandler('minerank', mine_rank))
 updater.dispatcher.add_handler(CommandHandler('deploy', deploy, pass_args=True, pass_chat_data=True))
