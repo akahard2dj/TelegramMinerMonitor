@@ -104,6 +104,9 @@ def timed_daily_report():
 #@sched.scheduled_job('interval', seconds=10)
 #def deploy_test():
 #    telegram_sender.send_message('test')
+@sched.scheduled_job('cron', day=21, hour=9)
+def alarm_rent_fee():
+    telegram_sender.send_message('Today is paying for an office rent fee\n')
     
 @sched.scheduled_job('interval', minutes=10)
 def timed_warning_message():

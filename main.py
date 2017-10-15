@@ -7,6 +7,7 @@ import pyotp
 from telegram.ext import Updater, CommandHandler
 
 from monitor.gpu_status import GPUInfo
+from monitor.miner_api import MinerAPI
 from monitor.monitor_result import get_gpu_info, get_mph_info, get_price, get_whattomine_result
 
 
@@ -54,16 +55,14 @@ def deploy(bot, update, args, chat_data):
             return
 
         if totp.verify(int(code)):
-            cmd1 = '{}kill_screen.sh'.format(exec_folder)
-            cmd2 = '{}deploy.sh'.format(exec_folder)
-            cmd3 = '{}start_monitoring.sh'.format(exec_folder)
-    
-            update.message.reply_text(cmd1)
-            update.message.reply_text(cmd2)
-            update.message.reply_text(cmd3)
-            update.message.reply_text('deploying > git fetching > start\n')
-            update.message.reply_text('successfull deployed\n')
-            call(['{};{};{}'.format(cmd1,cmd2,cmd3)])
+            cmd1 = '{}deploy.sh'.format(exec_folder)
+            cmd2 = '{}start_monitoring.sh'.format(exec_folder)
+            update.message.reply_text('git pulling...5 seconds sleep')    
+            call(['bash', '{}'.format(cmd1)])
+            sleep(5.0)
+            update.message.reply_text('restarting bot...')
+            call(['bash', '{}'.format(cmd2)])
+
         else:
             update.message.reply_text('Invalid auth code')
     except (IndexError, ValueError):
