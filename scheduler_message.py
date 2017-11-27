@@ -11,6 +11,16 @@ from utils.telegram_send_api import TelegramSendMessage
 from utils.util_api import UtilApi
 import utils.util
 
+'''
+from database.mapping_base import session
+from database.test_table import User
+
+user_model = User()
+user_model.set_entry('user', '홍길동', '1234')
+session.add(user_model)
+session.commit()
+'''
+
 sched = BlockingScheduler()
 
 mph_apikey = os.environ["MPH_APIKEY"]
