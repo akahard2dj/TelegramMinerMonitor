@@ -17,7 +17,7 @@ telegram_apikey = os.environ["TELEGRAM_APIKEY"]
 otp_key = os.environ["OTP_CODE"]
 exec_folder = os.environ["EXEC_FOLDER"]
 totp = pyotp.TOTP(otp_key)
-hosts = ['miner1', 'miner2']
+hosts = ['miner1', 'miner2', 'miner3']
 gpu_info = GPUInfo()
 miner_api = MinerAPI()
 
