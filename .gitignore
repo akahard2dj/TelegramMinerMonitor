@@ -1,3 +1,6 @@
+# Database
+*.sqlite
+
 # PyCharm
 .idea
 
