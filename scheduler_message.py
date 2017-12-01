@@ -11,15 +11,8 @@ from utils.telegram_send_api import TelegramSendMessage
 from utils.util_api import UtilApi
 import utils.util
 
-'''
 from database.mapping_base import session
-from database.test_table import User
-
-user_model = User()
-user_model.set_entry('user', '홍길동', '1234')
-session.add(user_model)
-session.commit()
-'''
+from database.mining_history_table import MiningHistory
 
 sched = BlockingScheduler()
 
@@ -49,6 +42,7 @@ def get_gpu_info(unix_time: int):
             gpu_data["fan"])
 
     return msg
+
 
 def get_mph_dashboard(unix_time: int):
     db_zec = Dashboard(apikey=mph_apikey)
@@ -89,6 +83,35 @@ def get_mph_dashboard(unix_time: int):
 
     return msg
 
+
+@sched.scheduled_job('cron', hour=8, minute=50)
+def db_pushing():
+    yesterday = datetime.date.today() - datetime.timedelta(1)
+    yesterday_str = yesterday.isoformat()
+
+    db_zec = Dashboard(apikey=mph_apikey)
+    db_zec.request_api(coin='zcash')
+    zec_json = db_zec.get_json()
+
+    bitcoin_dashboard = Dashboard(apikey=mph_apikey)
+    bitcoin_dashboard.request_api(coin='bitcoin')
+    btc_json = bitcoin_dashboard.get_json()
+
+    last_credit_zec = zec_json['getdashboarddata']['data']['recent_credits']
+    last_credit_btc = btc_json['getdashboarddata']['data']['recent_credits']
+
+    btc_credit = next(item for item in last_credit_btc if item['date'] == yesterday_str)
+    zec_credit = next(item for item in last_credit_zec if item['date'] == yesterday_str)
+
+    model = MiningHistory()
+    model.currency = 'ZEC'
+    model.amount = zec_credit['amount']
+    model.amount_btc = btc_credit['amount']
+    model.timestamp = yesterday
+    session.add(model)
+    session.commit()
+
+
 @sched.scheduled_job('cron', day_of_week='mon-sun', hour=9)
 def timed_daily_report():
 
@@ -111,13 +134,12 @@ def timed_daily_report():
     telegram_sender.send_message(mph_dashboard_text, verbose=True)
     telegram_sender.send_message(whattomine_report_text, verbose=True)
 
-#@sched.scheduled_job('interval', seconds=10)
-#def deploy_test():
-#    telegram_sender.send_message('test')
+
 @sched.scheduled_job('cron', day=21, hour=9)
 def alarm_rent_fee():
     telegram_sender.send_message('Today is paying for an office rent fee\n')
-    
+
+
 @sched.scheduled_job('interval', minutes=10)
 def timed_warning_message():
     unix_time = int(time.time())
@@ -128,18 +150,19 @@ def timed_warning_message():
         gpu = gpu_info.get_info(host)
         num_gpu = gpu["num_gpu"]
         if num_gpu is not num_gpu_set[idx]:
-            msg += 'Warning Workeres\n'
+            msg += 'Warning Workers\n'
             msg += 'Message: worker(s) are dead\n'
             msg += '{} : Workers {}/{}\n'.format(hosts[idx], num_gpu, num_gpu_set[idx])
 
         for idx2, gpu_data in enumerate(gpu["gpu_info"]):
             temp = gpu_data["temp"]
             if float(temp) > gpu_temp_thresh:
-                msg += 'Warning Temprature\n'
+                msg += 'Warning Temperature\n'
                 msg += 'Message: The temperature of GPU is high\n'
                 msg += '{} : {} GPU temp = {}\n'.format(hosts[idx], idx2, temp)
     if msg:
         telegram_sender.send_message(msg)
+
 
 if __name__ == '__main__':
     sched.start()
