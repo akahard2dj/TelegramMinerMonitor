@@ -27,7 +27,7 @@ mph_apikey = os.environ["MPH_APIKEY"]
 telegram_apikey = os.environ["TELEGRAM_APIKEY"]
 telegram_chat_id = os.environ["TELEGRAM_CHAT_ID"]
 hosts = ['miner1', 'miner2', 'miner3']
-num_gpu_set = [4, 4, 4]
+num_gpu_set = [6, 6, 6]
 gpu_temp_thresh = 77.0
 
 gpu_info = GPUInfo()
