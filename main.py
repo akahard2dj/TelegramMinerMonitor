@@ -113,19 +113,31 @@ def cmd_miner_start(bot, update, args, chat_data):
         if totp.verify(int(code)):
             #logging.warning('Someone get an authentication from server')
             call(['ssh', 'miner@miner1', "./kill_miner.sh"])
+            call(['ssh', 'miner@miner2', "./kill_miner.sh"])
+            call(['ssh', 'miner@miner3', "./kill_miner.sh"])
             if args[1] == 'zec':            
                 call(['ssh', 'miner@miner1', "./screen_start.sh", "zec"])
+                call(['ssh', 'miner@miner2', "./screen_start.sh", "zec"])
+                call(['ssh', 'miner@miner3', "./screen_start.sh", "zec"])
                 update.message.reply_text('Zcash mining is starting...')
             elif args[1] == 'eth':
                 call(['ssh', 'miner@miner1', "./screen_start.sh", "eth"])
+                call(['ssh', 'miner@miner2', "./screen_start.sh", "eth"])
+                call(['ssh', 'miner@miner3', "./screen_start.sh", "eth"])
                 update.message.reply_text('Ethereum mining is starting...')
+            elif args[1] == 'zen':
+                call(['ssh', 'miner@miner1', "./screen_start.sh", "zen"])
+                call(['ssh', 'miner@miner2', "./screen_start.sh", "zen"])
+                call(['ssh', 'miner@miner3', "./screen_start.sh", "zen"])
+                update.message.reply_text('Zencash mining is starting...')
+
             else:
-                update.message.reply_text('Invalid coin. [zec|eth]')       
+                update.message.reply_text('Invalid coin. [zec|zen|eth]')       
             
         else:
             update.message.reply_text('Invalid auth code')
     except (IndexError, ValueError):
-        update.message.reply_text('Usage: /cmd_start <authcode> [ZEC|ETH]')
+        update.message.reply_text('Usage: /cmd_start <authcode> [ZEC|ZEN|ETH]')
 
 
 def cmd_miner_kill(bot, update, args, chat_data):
