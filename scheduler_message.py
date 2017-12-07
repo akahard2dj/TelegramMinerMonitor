@@ -3,10 +3,12 @@ import time
 import os
 
 from apscheduler.schedulers.blocking import BlockingScheduler
+from sqlalchemy import func
+
 from monitor.monitor_result import get_gpu_info, get_mph_info, get_whattomine_result
 from monitor.gpu_status import GPUInfo
-
 from monitor.miningpoolhub_api import Dashboard
+
 from utils.telegram_send_api import TelegramSendMessage
 from utils.util_api import UtilApi
 import utils.util
@@ -84,7 +86,7 @@ def get_mph_dashboard(unix_time: int):
     return msg
 
 
-@sched.scheduled_job('cron', hour=8, minute=50)
+@sched.scheduled_job('cron', hour=8, minute=55)
 def db_pushing():
     yesterday = datetime.date.today() - datetime.timedelta(1)
     yesterday_str = yesterday.isoformat()
@@ -133,6 +135,32 @@ def timed_daily_report():
     telegram_sender.send_message(gpu_status_text, verbose=True)
     telegram_sender.send_message(mph_dashboard_text, verbose=True)
     telegram_sender.send_message(whattomine_report_text, verbose=True)
+
+
+@sched.scheduled_job('cron', day=1, hour=8, minute=59)
+def monthly_report():
+    days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    today = datetime.date.today()
+    days = days_in_month[today.month-1]
+    query_result = session.query(MiningHistory) \
+        .filter(func.extract('year', MiningHistory.timestamp) == today.year) \
+        .filter(func.extract('month', MiningHistory.timestamp) == today.month)
+
+    total_amount = 0.0
+    total_amount_btc = 0.0
+
+    for query in query_result:
+        total_amount += query.amount
+        total_amount_btc += query.amount_btc
+
+    fee_rate = 0.05
+    owner = total_amount / 3.0 + total_amount * (2.0 / 3.0) * fee_rate
+    investor = total_amount * (2 / 3) * (1.0 - fee_rate)
+    msg_text = 'Monthly Report\n'
+    msg_text += 'Mined Coin, Total Mined Amount, Total BTC Amount, Average BTC Per Day, Owner/Investor\n'
+    msg_text += '{}, {:.6f}, {:.6f}, {:.6f}, {:.6f}/{:.6f}\n'\
+        .format('ZEC', total_amount, total_amount_btc, total_amount_btc/days, owner, investor)
+    telegram_sender.send_message(msg_text, verbose=True)
 
 
 @sched.scheduled_job('cron', day=21, hour=9)
