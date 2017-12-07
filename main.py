@@ -18,6 +18,7 @@ otp_key = os.environ["OTP_CODE"]
 exec_folder = os.environ["EXEC_FOLDER"]
 totp = pyotp.TOTP(otp_key)
 hosts = ['miner1', 'miner2', 'miner3']
+coin_table = {'zec':'zcash', 'zen':'zencash'}
 gpu_info = GPUInfo()
 miner_api = MinerAPI()
 
@@ -119,16 +120,25 @@ def cmd_miner_start(bot, update, args, chat_data):
                 call(['ssh', 'miner@miner1', "./screen_start.sh", "zec"])
                 call(['ssh', 'miner@miner2', "./screen_start.sh", "zec"])
                 call(['ssh', 'miner@miner3', "./screen_start.sh", "zec"])
+                f = open('.current_coin', 'w')
+                f.write('zec\n')
+                f.close()
                 update.message.reply_text('Zcash mining is starting...')
             elif args[1] == 'eth':
                 call(['ssh', 'miner@miner1', "./screen_start.sh", "eth"])
                 call(['ssh', 'miner@miner2', "./screen_start.sh", "eth"])
                 call(['ssh', 'miner@miner3', "./screen_start.sh", "eth"])
+                f = open('.current_coin', 'w')
+                f.write('eth\n')
+                f.close()
                 update.message.reply_text('Ethereum mining is starting...')
             elif args[1] == 'zen':
                 call(['ssh', 'miner@miner1', "./screen_start.sh", "zen"])
                 call(['ssh', 'miner@miner2', "./screen_start.sh", "zen"])
                 call(['ssh', 'miner@miner3', "./screen_start.sh", "zen"])
+                f = open('.current_coin', 'w')
+                f.write('zen\n')
+                f.close()
                 update.message.reply_text('Zencash mining is starting...')
 
             else:

@@ -1,3 +1,6 @@
+# current coin
+.current_coin
+
 # Database
 *.sqlite
 

@@ -25,6 +25,7 @@ telegram_chat_id_cus = os.environ["TELEGRAM_CHAT_ID_CUSTOMER"]
 hosts = ['miner1', 'miner2', 'miner3']
 num_gpu_set = [6, 6, 6]
 gpu_temp_thresh = 77.0
+coin_table = {'zec':'zcash', 'zen':'zencash'}
 
 gpu_info = GPUInfo()
 telegram_sender = TelegramSendMessage(telegram_apikey, telegram_chat_id)
@@ -50,7 +51,11 @@ def get_gpu_info(unix_time: int):
 
 def get_mph_dashboard(unix_time: int):
     db_zec = Dashboard(apikey=mph_apikey)
-    db_zec.request_api(coin='zcash')
+    f = open('.current_coin')
+    line = f.readline()
+    f.close()
+    coin_key = line.rstrip()
+    db_zec.request_api(coin=coin_table[coin_key])
     
     bitcoin_dashboard = Dashboard(apikey=mph_apikey)
     bitcoin_dashboard.request_api(coin='bitcoin')
@@ -88,13 +93,17 @@ def get_mph_dashboard(unix_time: int):
     return msg
 
 
-@sched.scheduled_job('cron', hour=8, minute=55)
+#sched.scheduled_job('cron', hour=8, minute=55)
 def db_pushing():
     yesterday = datetime.date.today() - datetime.timedelta(1)
     yesterday_str = yesterday.isoformat()
 
     db_zec = Dashboard(apikey=mph_apikey)
-    db_zec.request_api(coin='zcash')
+    f = open('.current_coin')
+    line = f.readline()
+    f.close()
+    coin_key = line.rstrip()
+    db_zec.request_api(coin=coin_table[coin_key])
     zec_json = db_zec.get_json()
 
     bitcoin_dashboard = Dashboard(apikey=mph_apikey)
@@ -108,7 +117,7 @@ def db_pushing():
     zec_credit = next(item for item in last_credit_zec if item['date'] == yesterday_str)
 
     model = MiningHistory()
-    model.currency = 'ZEC'
+    model.currency = coin_key.upper()
     model.amount = zec_credit['amount']
     model.amount_btc = btc_credit['amount']
     model.timestamp = yesterday

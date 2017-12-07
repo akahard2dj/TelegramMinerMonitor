@@ -3,6 +3,7 @@ from monitor.miner_api import MinerAPI
 from monitor.whattomine_crawler import WhatToMine
 from utils.util_api import UtilApi
 import utils.util
+coin_table = {'zec':'zcash', 'zen':'zencash'}
 
 
 def get_miner_report(unix_time: int, miner_api: MinerAPI, hosts):
@@ -40,7 +41,12 @@ def get_gpu_info(unix_time: int, gpu_info, hosts):
 
 def get_mph_info(unix_time: int, mph_apikey):
     db_zec = Dashboard(apikey=mph_apikey)
-    db_zec.request_api(coin='zcash')
+    f = open('.current_coin')
+    line = f.readline()
+    f.close()
+    coin_key = line.rstrip()
+
+    db_zec.request_api(coin=coin_table[coin_key])
     db_eth = Dashboard(apikey=mph_apikey)
     db_eth.request_api(coin='ethereum')
 
