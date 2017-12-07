@@ -21,12 +21,14 @@ sched = BlockingScheduler()
 mph_apikey = os.environ["MPH_APIKEY"]
 telegram_apikey = os.environ["TELEGRAM_APIKEY"]
 telegram_chat_id = os.environ["TELEGRAM_CHAT_ID"]
+telegram_chat_id_cus = os.environ["TELEGRAM_CHAT_ID_CUSTOMER"]
 hosts = ['miner1', 'miner2', 'miner3']
 num_gpu_set = [6, 6, 6]
 gpu_temp_thresh = 77.0
 
 gpu_info = GPUInfo()
 telegram_sender = TelegramSendMessage(telegram_apikey, telegram_chat_id)
+telegram_sender_cus = TelegramSendMessage(telegram_apikey, telegram_chat_id_cus)
 
 
 def get_gpu_info(unix_time: int):
@@ -135,6 +137,10 @@ def timed_daily_report():
     telegram_sender.send_message(gpu_status_text, verbose=True)
     telegram_sender.send_message(mph_dashboard_text, verbose=True)
     telegram_sender.send_message(whattomine_report_text, verbose=True)
+
+    telegram_sender_cus.send_message(gpu_status_text, verbose=True)
+    telegram_sender_cus.send_message(mph_dashboard_text, verbose=True)
+    telegram_sender_cus.send_message(whattomine_report_text, verbose=True)
 
 
 @sched.scheduled_job('cron', day=1, hour=8, minute=59)
