@@ -93,7 +93,7 @@ def get_mph_dashboard(unix_time: int):
     return msg
 
 
-#sched.scheduled_job('cron', hour=8, minute=55)
+@sched.scheduled_job('cron', hour=8, minute=55)
 def db_pushing():
     yesterday = datetime.date.today() - datetime.timedelta(1)
     yesterday_str = yesterday.isoformat()
