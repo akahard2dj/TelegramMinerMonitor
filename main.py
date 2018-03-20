@@ -1,7 +1,10 @@
 import os
 import time
+import datetime
 from subprocess import call
 from time import sleep
+
+from sqlalchemy import func
 
 import pyotp
 from telegram import Bot, Update
@@ -11,6 +14,10 @@ from monitor.gpu_status import GPUInfo
 from monitor.miner_api import MinerAPI
 from monitor.monitor_result import get_gpu_info, get_mph_info, get_price, get_whattomine_result, get_miner_report
 
+import utils.util
+
+from database.mapping_base import session
+from database.mining_history_table import MiningHistory
 
 mph_apikey = os.environ["MPH_APIKEY"]
 telegram_apikey = os.environ["TELEGRAM_APIKEY"]
@@ -41,6 +48,59 @@ def status(bot, update):
     msg = get_mph_info(unix_time, mph_apikey)
     
     update.message.reply_text(msg)
+
+def dbtest(bot, update, args, chat_data):
+    chat_id = update.message.chat_id
+    unix_time = int(time.time())
+    t=datetime.date.today()
+    print(type(t.year))
+
+    try:
+        year = args[0]
+        month = args[1]
+        if not (year.isdigit() and month.isdigit()):
+            update.message.reply_text('Invalid Month')
+            return
+        else:
+            #req_date = datetime.datetime(int(year), int(month), 1)
+            req_date = datetime.date.today()
+            #print(req_date, req_date.year, req_date.month)
+            query_result = session.query(MiningHistory) \
+                .filter(func.extract('year', MiningHistory.timestamp) == req_date.year) \
+                .filter(func.extract('month', MiningHistory.timestamp) == req_date.month)
+            #print(query_result)
+            msg = 'Requested Date : {}-{}\n'.format(year, month)
+            msg = 'Time, MinedCoin, MinedAmount, BTC\n'
+            total_amount = 0.0
+            total_amount_btc = 0.0
+            for query in query_result:
+                total_amount += float(query.amount)
+                total_amount += float(query.amount_btc)
+                msg += '{}, {}, {}, {}\n'.format(query.timestamp, query.currency, query.amount, query.amount_btc)
+            msg += 'Averaged mined coin = {}, {}\n'.format(total_amount / float(req_date.day),
+                    total_amount_btc / float(req_date.day))
+
+            update.message.reply_text(msg)
+
+    except (IndexError):
+            today = datetime.date.today()
+            query_result = session.query(MiningHistory) \
+                .filter(func.extract('year', MiningHistory.timestamp) == today.year) \
+                .filter(func.extract('month', MiningHistory.timestamp) == today.month)
+
+            total_amount = 0.0
+            total_amount_btc = 0.0
+            msg = 'Requested Date : {}-{}\n'.format(today.year, today.month)
+            msg += 'Time, MinedCoin, MinedAmount, BTC\n'
+            for query in query_result:
+                total_amount += float(query.amount)
+                total_amount_btc += float(query.amount_btc)
+                msg += '{}, {}, {:.6f}, {:.6f}\n'.format(query.timestamp, query.currency, query.amount, query.amount_btc)
+
+            msg += '\nDayily Averaged = {:.6f}, {:.6f}\n'.format(total_amount / float(today.day),
+                    total_amount_btc / float(today.day))
+
+            update.message.reply_text(msg)
 
 
 def price(bot, update):
@@ -169,9 +229,23 @@ def cmd_miner_kill(bot, update, args, chat_data):
         update.message.reply_text('Usage: /cmd_kill <authcode>')
 
 
+def help(bot, update):
+    msg = '/status : current mining records\n'
+    msg += '/dbmining : mined coin from db\n'
+    msg += '/gpu : gpu status from nvidia-smi\n'
+    msg += '/miner : miner status from miner program\n'
+    msg += '/price : requesting a coin price\n'
+    msg += '/minerank : profitability report from whattomine\n'
+
+    update.message.reply_text(msg)
+
+
 updater = Updater(telegram_apikey)
 
+updater.dispatcher.add_handler(CommandHandler('help', help))
 updater.dispatcher.add_handler(CommandHandler('status', status))
+#updater.dispatcher.add_handler(CommandHandler('dbtest', dbtest))
+updater.dispatcher.add_handler(CommandHandler('dbmining', dbtest, pass_args=True, pass_chat_data=True))
 updater.dispatcher.add_handler(CommandHandler('gpu', gpu_status))
 updater.dispatcher.add_handler(CommandHandler('miner', miner_status))
 updater.dispatcher.add_handler(CommandHandler('price', price))

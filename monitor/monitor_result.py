@@ -105,12 +105,21 @@ def get_price(unix_time: int):
     eth_bitfinex = util.get_bitfinex(coin='ethusd')
     currency = util.get_currency()
     coinone_price = util.get_coinone()
+    btc_krw = btc_bitfinex * currency["KRW"]
+    premium = ((float(coinone_price["btc"]["last"]) - btc_krw) / btc_krw) * 100.0
+    zec_btc = zec_bitfinex / btc_bitfinex
 
     msg = ''
     msg += 'Requested Time = {}\n'.format(utils.util.timestamp_to_datetime(unix_time))
     msg += "Currency:\n"
     msg += "  USD     1.0\n"
     msg += "  KRW  {}\n".format(currency['KRW'])
+    msg += "\n"
+    msg += "Premium:\n"
+    msg += "  KRW->USD : {:5.2f} %\n".format(premium)
+    msg += "\n"
+    msg += "ZEC[BTC]:\n"
+    msg += "  Zcash : {:7.5f}\n".format(zec_btc)
     msg += "\n"
     msg += "Coin Price[USD]:\n"
     msg += "  Bitcoin : {:12.2f}\n".format(btc_bitfinex)

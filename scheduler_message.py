@@ -5,7 +5,7 @@ import os
 from apscheduler.schedulers.blocking import BlockingScheduler
 from sqlalchemy import func
 
-from monitor.monitor_result import get_gpu_info, get_mph_info, get_whattomine_result
+from monitor.monitor_result import get_gpu_info, get_mph_info, get_whattomine_result, get_price
 from monitor.gpu_status import GPUInfo
 from monitor.miningpoolhub_api import Dashboard
 
@@ -146,10 +146,12 @@ def timed_daily_report():
     telegram_sender.send_message(gpu_status_text, verbose=True)
     telegram_sender.send_message(mph_dashboard_text, verbose=True)
     telegram_sender.send_message(whattomine_report_text, verbose=True)
+    #telegram_sender.send_message(get_price, verbose=True)
 
     telegram_sender_cus.send_message(gpu_status_text, verbose=True)
     telegram_sender_cus.send_message(mph_dashboard_text, verbose=True)
     telegram_sender_cus.send_message(whattomine_report_text, verbose=True)
+    #telegram_sender_cus.send_message(get_price, verbose=True)
 
 
 @sched.scheduled_job('cron', day=1, hour=8, minute=59)
